@@ -1,35 +1,24 @@
 {
-    "name": "gabordikan/yii2cor4datatables",
-    "description": "Searchable DataTables widget for Yii2",
+    "name": "gabordikan/yii2-cor4-datatables",
+    "description": "Yii2 Searchable Datatables widget",
     "type": "yii2-extension",
-    "minimum-stability": "stable",
-    "keywords": ["yii2","extension","jquery","datatables","table","javascript","library"],
+    "require": {
+        "yiisoft/yii2": "2.0.49.3",
+        "bower-asset/jquery": ">= 1.7.0",
+        "bower-asset/datatables": ">= 1.9.4",
+        "bower-asset/datatables-bootstrap3": "*",
+        "bower-asset/datatables-tabletools": "*"
+    },
     "license": "MIT",
-    "support": {
-        "issues": "https://github.com/gabordikan/yii2cor4datatables/issues?state=open",
-        "source": "https://github.com/gabordikan/yii2cor4datatables"
+    "autoload": {
+        "psr-4": {
+            "gabordikan\\cor4\\datatables\\": "src/"
+        }
     },
     "authors": [
         {
-            "name": "Gabor Dikan",
-            "email": "gabordikan@gmail.com"
+            "name": "Gabor Dikan"
         }
     ],
-    "require": {
-        "yiisoft/yii2":"*",
-        "bower-asset/jquery":">= 1.7.0",
-        "bower-asset/datatables":">= 1.9.4",
-        "bower-asset/datatables-bootstrap3":"*",        
-        "bower-asset/datatables-tabletools":"*"        
-    },
-    "autoload": {
-        "psr-4": {
-            "gabordikan\\cor4\\datatables\\": ""
-        }
-    },
-    "extra": {
-        "asset-installer-paths": {
-            "bower-asset-library": "vendor/bower"
-        }
-    }
+    "minimum-stability": "stable"
 }
