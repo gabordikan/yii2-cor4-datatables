@@ -3,7 +3,7 @@
     "description": "Yii2 Searchable Datatables widget",
     "type": "yii2-extension",
     "require": {
-        "yiisoft/yii2": "2.0.49.3",
+        "yiisoft/yii2": "*",
         "bower-asset/jquery": ">= 1.7.0",
         "bower-asset/datatables": ">= 1.9.4",
         "bower-asset/datatables-bootstrap3": "*",
