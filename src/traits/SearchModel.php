@@ -6,6 +6,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use Yii;
 
+/**
+ * MozgasSearch represents the model behind the search form of `app\models\Mozgas`.
+ */
 Trait SearchModel
 {
 

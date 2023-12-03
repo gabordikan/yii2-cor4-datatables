@@ -29,6 +29,7 @@ function cor4DataTables( selector, options ) {
       buttons: [
         'click'
       ],
+      prefix: options.prefix,
 
       initComplete : function() {
 
@@ -46,7 +47,7 @@ function cor4DataTables( selector, options ) {
           /*let searchParams = new URLSearchParams(window.location.search);
           let param = searchParams.get("search["+this.index()+"]");*/
 
-          param = getCookie("search["+this.index()+"]");
+          param = getCookie(options.prefix + "_search["+this.index()+"]");
           if (param == null) {
             param = '';
           }
