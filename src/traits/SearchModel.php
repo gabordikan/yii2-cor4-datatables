@@ -1,14 +1,11 @@
 <?php
 
-namespace gabordikan\cor4\datatables\models;
+namespace gabordikan\cor4\datatables\traits;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use Yii;
 
-/**
- * MozgasSearch represents the model behind the search form of `app\models\Mozgas`.
- */
 Trait SearchModel
 {
 
