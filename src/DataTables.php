@@ -58,9 +58,10 @@ class DataTables extends \yii\grid\GridView {
         $clientOptions = $this->getClientOptions();
         $view = $this->getView();
         $id = $this->tableOptions['id'];
-        
+
+        DataTablesAsset::register($view);
         DataTablesBootstrapAsset::register($view);
-        DataTablesAsset::register( $this->getView() );
+        DataTablesCor4Asset::register($view);
 
         $options = Json::encode($clientOptions);
 
