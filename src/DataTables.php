@@ -11,6 +11,7 @@ namespace gabordikan\cor4\datatables;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class DataTables extends \yii\grid\GridView {
 
@@ -56,6 +57,21 @@ class DataTables extends \yii\grid\GridView {
 
     public function run() {
         $clientOptions = $this->getClientOptions();
+
+        if (!isset($clientOptions['url']) || !$clientOptions['url'])
+        {
+            $clientOptions['url'] = Url::base(); 
+        }
+
+        if (!isset($clientOptions['prefix']) || !$clientOptions['prefix'])
+        {
+            $clientOptions['prefix'] = 'datatable';
+            $models = $this->dataProvider->getModels();
+            if (count($models) > 0) {
+                $clientOptions['prefix'] =  $models[0]->tableName();
+            }
+        }
+
         $view = $this->getView();
         $id = $this->tableOptions['id'];
 

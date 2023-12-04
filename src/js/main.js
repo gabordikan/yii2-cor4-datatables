@@ -19,7 +19,6 @@ function cor4DataTables( selector, options ) {
     jQuery(selector).DataTable({
 
       searching: false,
-      //ajax: '/api/listkess',
       paging: true,
       scrollX: true,
       scroller: true,
@@ -63,7 +62,7 @@ function cor4DataTables( selector, options ) {
                       searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
                     }
                   });
-                  window.location = '/site/listkess?'+searchText;
+                  window.location = options.url+'?'+searchText;
                 }
               });
           } else {
@@ -77,7 +76,7 @@ function cor4DataTables( selector, options ) {
                     searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
                   }
                 });
-                window.location = '/site/listkess?'+searchText;
+                window.location = options.url+'?'+searchText;
               });
           }
         });
