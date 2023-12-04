@@ -106,9 +106,11 @@ Trait SearchModel
                 break;
             }
 
-            $query->andFilterWhere(
-                [$searchOperator,$this->getIndexes()[$idx],$searchText2]
-            );
+            if (isset($this->getIndexes()[$idx])) { 
+                $query->andFilterWhere(
+                    [$searchOperator,$this->getIndexes()[$idx],$searchText2]
+                );
+            }
         }
 
         $query = $this->addDefaultCondition($query);
