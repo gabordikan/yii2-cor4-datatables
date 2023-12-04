@@ -11,6 +11,14 @@ use Yii;
  */
 Trait SearchModel
 {
+    public string $prefix;
+
+    public function __construct($prefix = null)
+    {
+        $this->prefix = $prefix ?? $this->tableName();
+
+        parent::__construct();
+    }
 
     public function getIndexes()
     {
@@ -59,14 +67,14 @@ Trait SearchModel
 
         $params = Yii::$app->request->queryParams;
 
-        if (!isset($_COOKIE[$this->tableName().'_search'])) {
-            $_COOKIE[$this->tableName().'_search'] = [];
+        if (!isset($_COOKIE[$this->prefix.'_search'])) {
+            $_COOKIE[$this->prefix.'_search'] = [];
         }
 
         if (isset($params['search'])) {
             foreach ($params['search'] as $idx=>$searchText) {
-                setcookie($this->tableName().'_search['.$idx.']', $searchText);
-                $_COOKIE[$this->tableName().'_search'][$idx] = $searchText;
+                setcookie($this->prefix.'_search['.$idx.']', $searchText);
+                $_COOKIE[$this->prefix.'_search'][$idx] = $searchText;
             }
         }
 
@@ -74,7 +82,7 @@ Trait SearchModel
 
         $searchText2 = "";
 
-        foreach($_COOKIE[$this->tableName().'_search'] as $idx=>$searchText) {
+        foreach($_COOKIE[$this->prefix.'_search'] as $idx=>$searchText) {
             switch (substr($searchText,0,1)) {
                 case '<':
                     $searchOperator = '<';

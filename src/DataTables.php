@@ -68,7 +68,7 @@ class DataTables extends \yii\grid\GridView {
             $clientOptions['prefix'] = 'datatable';
             $models = $this->dataProvider->getModels();
             if (count($models) > 0) {
-                $clientOptions['prefix'] =  $models[0]->tableName();
+                $clientOptions['prefix'] =  $models[0]->prefix;
             }
         }
 
