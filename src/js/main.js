@@ -25,14 +25,19 @@ function cor4DataTables( selector, options ) {
       scrollY: '100%',
       pageLength: 25,
       order: options.order,
+      dom: 'Blfrtip',
       buttons: [
-        'click'
+        'copy', 'excel', 'print'
       ],
+      'language': {
+        'url': '//cdn.datatables.net/plug-ins/1.10.19/i18n/Hungarian.json'
+      },
       prefix: options.prefix,
 
       initComplete : function() {
 
         var table = this.api();
+
         $('<tr></tr>').appendTo($('thead'));
   
         // Add filtering
@@ -43,8 +48,6 @@ function cor4DataTables( selector, options ) {
       
           let th_style = $("thead tr:eq(0) th").eq(this.index()).attr('style');
           let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
-          /*let searchParams = new URLSearchParams(window.location.search);
-          let param = searchParams.get("search["+this.index()+"]");*/
 
           param = getCookie(options.prefix + "_search["+this.index()+"]");
           if (param == null) {
@@ -82,4 +85,5 @@ function cor4DataTables( selector, options ) {
         });
     }
     });
+    $.fn.dataTable.ext.order.intl( 'hu' );
 }

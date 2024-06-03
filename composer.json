@@ -5,9 +5,14 @@
     "require": {
         "yiisoft/yii2": "*",
         "bower-asset/jquery": ">= 1.7.0",
-        "bower-asset/datatables": ">= 1.9.4",
-        "bower-asset/datatables-bootstrap3": "*",
-        "bower-asset/datatables-tabletools": "*"
+        "bower-asset/datatables.net": "~1.13.4",
+        "bower-asset/datatables.net-bs": "~1.13.4",
+        "bower-asset/datatables.net-jqui": "~1.13.3",
+        "bower-asset/datatables.net-buttons": "~1.7.1",
+        "bower-asset/datatables.net-buttons-bs": "~1.7.1",
+        "bower-asset/datatables.net-buttons-jqui": "~1.7.1",
+        "bower-asset/jszip": "^3.10",
+        "bower-asset/pdfmake": "^0.2.7"
     },
     "license": "MIT",
     "autoload": {
