@@ -69,7 +69,7 @@ function cor4DataTables( selector, options ) {
                 }
               });
           } else {
-            $('<button text=""><i class="fa-solid fa-rotate"></button>')
+            $('<center><button text=""><i class="fa fa-rotate-right"></button><center>')
             .appendTo($("thead tr:eq(1) th").eq(this.index()))
               .on("click", function(evt) {
                 var searchText = '';

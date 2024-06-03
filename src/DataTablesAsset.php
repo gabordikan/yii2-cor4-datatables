@@ -8,6 +8,7 @@ class DataTablesAsset extends AssetBundle
     public $sourcePath = '@bower';
 
     public $css = [
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
         "datatables.net-jqui/css/dataTables.jqueryui.min.css",
         "datatables.net-bs/css/dataTables.bootstrap.min.css",
 
