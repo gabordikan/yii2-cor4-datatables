@@ -7,7 +7,7 @@ use yii\data\ActiveDataProvider;
 use Yii;
 
 /**
- * MozgasSearch represents the model behind the search form of `app\models\Mozgas`.
+ * use this trait in your SearchModel to extend filters from DataTable with special characters
  */
 Trait SearchModel
 {
@@ -81,35 +81,54 @@ Trait SearchModel
         // grid filtering conditions
 
         $searchText2 = "";
+        $searchText3 = "";
 
         foreach($_COOKIE[$this->prefix.'_search'] as $idx=>$searchText) {
-            switch (substr($searchText,0,1)) {
-                case '<':
-                    $searchOperator = '<';
-                    $searchText2 = substr($searchText,1);
+            if (strpos($searchText, '|')) { //Interval: from|to
+                $intervals = explode('|', $searchText);
+                $searchOperator = 'between';
+                $searchText2 = $intervals[0];
+                $searchText3 = $intervals[1];
+            } else { //Modifiers
+                switch (substr($searchText,0,1)) {
+                    case '<':
+                        $searchOperator = '<';
+                        $searchText2 = substr($searchText,1);
+                        break;
+                    case '>':
+                        $searchOperator = '>';
+                        $searchText2 = substr($searchText,1);
+                        break;
+                    case '=':
+                        $searchOperator = '=';
+                        $searchText2 = substr($searchText,1);
+                        break;
+                    case '!':
+                        if (substr($searchText,1,1) == "=") {
+                            $searchOperator = '!=';
+                            $searchText2 = substr($searchText,2);
+                        } else {
+                            $searchOperator = 'not like';
+                            $searchText2 = substr($searchText,1);
+                        }
+                        break;
+                    default:
+                        $searchOperator = 'like';
+                        $searchText2 = $searchText ?? '';
                     break;
-                case '>':
-                    $searchOperator = '>';
-                    $searchText2 = substr($searchText,1);
-                    break;
-                case '=':
-                    $searchOperator = '=';
-                    $searchText2 = substr($searchText,1);
-                    break;
-                case '!':
-                    $searchOperator = 'not like';
-                    $searchText2 = substr($searchText,1);
-                    break;
-                default:
-                    $searchOperator = 'like';
-                    $searchText2 = $searchText ?? '';
-                break;
+                }
             }
 
             if (isset($this->getIndexes()[$idx])) { 
-                $query->andFilterWhere(
-                    [$searchOperator,$this->getIndexes()[$idx],$searchText2]
-                );
+                if ($searchOperator == "between") {
+                    $query->andWhere(
+                        [$searchOperator,$this->getIndexes()[$idx], $searchText2, $searchText3]
+                    );
+                } else {
+                    $query->andWhere(
+                        [$searchOperator,$this->getIndexes()[$idx], $searchText2]
+                    );
+                }
             }
         }
 

@@ -85,5 +85,4 @@ function cor4DataTables( selector, options ) {
         });
     }
     });
-    $.fn.dataTable.ext.order.intl( 'hu' );
 }
