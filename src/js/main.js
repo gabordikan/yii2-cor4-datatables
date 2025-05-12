@@ -86,6 +86,6 @@ function cor4DataTables( selector, options ) {
             }
           });
         }
-    }
+      }
     });
 }
