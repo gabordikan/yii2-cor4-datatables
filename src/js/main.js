@@ -33,6 +33,7 @@ function cor4DataTables( selector, options ) {
         'url': '//cdn.datatables.net/plug-ins/1.10.19/i18n/Hungarian.json'
       },
       prefix: options.prefix,
+      hideSearch: options.hideSearch,
 
       initComplete : function() {
 
@@ -41,23 +42,38 @@ function cor4DataTables( selector, options ) {
         $('<tr></tr>').appendTo($('thead'));
   
         // Add filtering
-        table.columns().every(function() {
-          var column = this;
+        if (!options.hideSearch) {
+          table.columns().every(function() {
+            var column = this;
 
-          $('<th></th>').appendTo($("thead tr:eq(1)"));
-      
-          let th_style = $("thead tr:eq(0) th").eq(this.index()).attr('style');
-          let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
+            $('<th></th>').appendTo($("thead tr:eq(1)"));
+        
+            let th_style = $("thead tr:eq(0) th").eq(this.index()).attr('style');
+            let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
 
-          param = getCookie(options.prefix + "_search["+this.index()+"]");
-          if (param == null) {
-            param = '';
-          }
-          if (th_value.length > 1) {
-            $('<input type="text" style="'+th_style+'" value="'+param+'"/>')
+            param = getCookie(options.prefix + "_search["+this.index()+"]");
+            if (param == null) {
+              param = '';
+            }
+            if (th_value.length > 1) {
+              $('<input type="text" style="'+th_style+'" value="'+param+'"/>')
+                .appendTo($("thead tr:eq(1) th").eq(this.index()))
+                .on("keyup", function(evt) {
+                  if(evt.key == 'Enter') {
+                    var searchText = '';
+                    table.columns().every(function() {
+                      let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
+                      if (th_value.length > 1) {
+                        searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
+                      }
+                    });
+                    window.location = options.url+'?'+searchText;
+                  }
+                });
+            } else {
+              $('<center><button text=""><i class="fa fa-rotate-right"></button><center>')
               .appendTo($("thead tr:eq(1) th").eq(this.index()))
-              .on("keyup", function(evt) {
-                if(evt.key == 'Enter') {
+                .on("click", function(evt) {
                   var searchText = '';
                   table.columns().every(function() {
                     let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
@@ -66,23 +82,10 @@ function cor4DataTables( selector, options ) {
                     }
                   });
                   window.location = options.url+'?'+searchText;
-                }
-              });
-          } else {
-            $('<center><button text=""><i class="fa fa-rotate-right"></button><center>')
-            .appendTo($("thead tr:eq(1) th").eq(this.index()))
-              .on("click", function(evt) {
-                var searchText = '';
-                table.columns().every(function() {
-                  let th_value = $("thead tr:eq(0) th").eq(this.index()).text();
-                  if (th_value.length > 1) {
-                    searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
-                  }
                 });
-                window.location = options.url+'?'+searchText;
-              });
-          }
-        });
+            }
+          });
+        }
     }
     });
 }
