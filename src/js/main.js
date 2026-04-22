@@ -34,6 +34,8 @@ function cor4DataTables( selector, options ) {
       },
       prefix: options.prefix,
       hideSearch: options.hideSearch,
+      serverSide: options.serverSide || false,
+      ajax: options.ajax || null,
 
       initComplete : function() {
 
@@ -67,7 +69,14 @@ function cor4DataTables( selector, options ) {
                         searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
                       }
                     });
-                    window.location = options.url+'?'+searchText;
+                    
+                    if (options.serverSide) {
+                        // Determine base URL depending on if there's a query string already
+                        var baseUrl = options.url.split('?')[0];
+                        table.ajax.url(baseUrl + '?' + searchText).load();
+                    } else {
+                        window.location = options.url+'?'+searchText;
+                    }
                   }
                 });
             } else {
@@ -81,7 +90,13 @@ function cor4DataTables( selector, options ) {
                       searchText += 'search['+this.index()+']='+$("thead tr:eq(1) th input").eq(this.index()).val()+'&';
                     }
                   });
-                  window.location = options.url+'?'+searchText;
+                  
+                  if (options.serverSide) {
+                      var baseUrl = options.url.split('?')[0];
+                      table.ajax.url(baseUrl + '?' + searchText).load();
+                  } else {
+                      window.location = options.url+'?'+searchText;
+                  }
                 });
             }
           });

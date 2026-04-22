@@ -12,6 +12,7 @@ use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use Yii;
 
 class DataTables extends \yii\grid\GridView {
 
@@ -43,9 +44,6 @@ class DataTables extends \yii\grid\GridView {
         //disable sort by grid view
         $this->dataProvider->sort = false;
         
-        //disable pagination by grid view
-        $this->dataProvider->pagination = false;
-        
         //layout showing only items
         $this->layout = "{items}";
         
@@ -56,12 +54,69 @@ class DataTables extends \yii\grid\GridView {
     }
 
     public function run() {
+        $request = \Yii::$app->request;
+        
+        // DataTables Server-side AJAX kérés lekezelése
+        if ($request->isAjax && $request->get('draw')) {
+            \Yii::$app->response->clearOutputBuffers();
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $draw = $request->get('draw');
+            $start = $request->get('start', 0);
+            $length = $request->get('length', 25);
+
+            // Lapozás (LIMIT/OFFSET) beállítása a DataProvider-en
+            $this->dataProvider->pagination = [
+                'pageSize' => $length == -1 ? 0 : $length,
+                'page' => $length > 0 ? floor($start / $length) : 0,
+            ];
+
+            // Újra előkészítjük a lekérdezést az új limit/offset értékekkel
+            $this->dataProvider->prepare(true);
+
+            $models = $this->dataProvider->getModels();
+            $keys = $this->dataProvider->getKeys();
+
+            $data = [];
+            foreach ($models as $index => $model) {
+                $key = $keys[$index];
+                $rowData = [];
+                // Végigmegyünk a GridView definiált oszlopain
+                foreach ($this->columns as $column) {
+                    $tdHtml = $column->renderDataCell($model, $key, $index);
+                    // Kinyerjük csak a cella belső HTML tartalmát a <td> tag-ek közül
+                    if (preg_match('/<td[^>]*>(.*)<\/td>/is', $tdHtml, $matches)) {
+                        $rowData[] = $matches[1];
+                    } else {
+                        $rowData[] = $tdHtml;
+                    }
+                }
+                $data[] = $rowData;
+            }
+
+            $totalCount = $this->dataProvider->getTotalCount();
+
+            // JSON válasz a DataTables-nek
+            \Yii::$app->response->data = [
+                'draw' => (int)$draw,
+                'recordsTotal' => $totalCount,
+                'recordsFiltered' => $totalCount, // A szűrést a SearchModel végzi a URL alapján
+                'data' => $data,
+            ];
+            \Yii::$app->response->send();
+            exit();
+        }
+
         $clientOptions = $this->getClientOptions();
 
         if (!isset($clientOptions['url']) || !$clientOptions['url'])
         {
             $clientOptions['url'] = Url::base(); 
         }
+
+        // Beállítjuk a JS számára a Server-side paramétereket
+        $clientOptions['serverSide'] = true;
+        $clientOptions['ajax'] = Url::current(); // AJAX a jelenlegi URL-re a paraméterekkel együtt
 
         if (!isset($clientOptions['prefix']) || !$clientOptions['prefix'])
         {
@@ -116,5 +171,3 @@ class DataTables extends \yii\grid\GridView {
         return $this->clientOptions;
     }
 }
-
-?>
