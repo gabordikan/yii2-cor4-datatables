@@ -75,14 +75,37 @@ class DataTables extends \yii\grid\GridView {
             $orderParams = $request->get('order', []);
             if (!empty($orderParams)) {
                 $orders = [];
+                
+                // Megpróbáljuk kinyerni a SearchModel-t a getIndexes() eléréséhez
+                $indexes = [];
+                if ($this->dataProvider instanceof \yii\data\ActiveDataProvider && $this->dataProvider->query instanceof \yii\db\ActiveQuery) {
+                    $modelClass = $this->dataProvider->query->modelClass;
+                    $searchClass = substr($modelClass, -6) === 'Search' ? $modelClass : $modelClass . 'Search';
+                    if (class_exists($searchClass)) {
+                        $searchModel = new $searchClass();
+                        if (method_exists($searchModel, 'getIndexes')) {
+                            $indexes = $searchModel->getIndexes();
+                        }
+                    }
+                }
+
                 foreach ($orderParams as $order) {
                     $columnIndex = isset($order['column']) ? (int)$order['column'] : -1;
                     $dir = (isset($order['dir']) && $order['dir'] === 'desc') ? SORT_DESC : SORT_ASC;
                     
-                    if ($columnIndex >= 0 && isset($this->columns[$columnIndex])) {
-                        $column = $this->columns[$columnIndex];
-                        if ($column instanceof \yii\grid\DataColumn && $column->attribute !== null) {
-                            $orders[$column->attribute] = $dir;
+                    if ($columnIndex >= 0) {
+                        $attribute = $indexes[$columnIndex] ?? null;
+                        
+                        // Fallback a GridView oszlop attribute-jára, ha a SearchModel-ben nincs meg
+                        if (!$attribute && isset($this->columns[$columnIndex])) {
+                            $column = $this->columns[$columnIndex];
+                            if ($column instanceof \yii\grid\DataColumn && $column->attribute !== null) {
+                                $attribute = $column->attribute;
+                            }
+                        }
+
+                        if ($attribute) {
+                            $orders[$attribute] = $dir;
                         }
                     }
                 }
