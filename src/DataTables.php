@@ -71,6 +71,27 @@ class DataTables extends \yii\grid\GridView {
                 'page' => $length > 0 ? floor($start / $length) : 0,
             ];
 
+            // Rendezés beállítása a DataTables 'order' paramétere alapján
+            $orderParams = $request->get('order', []);
+            if (!empty($orderParams)) {
+                $orders = [];
+                foreach ($orderParams as $order) {
+                    $columnIndex = isset($order['column']) ? (int)$order['column'] : -1;
+                    $dir = (isset($order['dir']) && $order['dir'] === 'desc') ? SORT_DESC : SORT_ASC;
+                    
+                    if ($columnIndex >= 0 && isset($this->columns[$columnIndex])) {
+                        $column = $this->columns[$columnIndex];
+                        if ($column instanceof \yii\grid\DataColumn && $column->attribute !== null) {
+                            $orders[$column->attribute] = $dir;
+                        }
+                    }
+                }
+                
+                if (!empty($orders) && $this->dataProvider instanceof \yii\data\ActiveDataProvider) {
+                    $this->dataProvider->query->orderBy($orders);
+                }
+            }
+
             // Újra előkészítjük a lekérdezést az új limit/offset értékekkel
             $this->dataProvider->prepare(true);
 
