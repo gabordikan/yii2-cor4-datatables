@@ -171,6 +171,37 @@ class DataTables extends \yii\grid\GridView {
             }
         }
 
+        $prefix = $clientOptions['prefix'];
+        $cookieName = $prefix . '_state';
+        $stateJson = isset($_COOKIE[$cookieName]) ? $_COOKIE[$cookieName] : null;
+        if ($stateJson !== null) {
+            $state = json_decode(rawurldecode($stateJson), true);
+            if (is_array($state)) {
+                $savedLength = isset($state['length']) ? (int)$state['length'] : null;
+                $savedStart = isset($state['start']) ? (int)$state['start'] : null;
+                
+                if ($savedLength !== null && $this->dataProvider->pagination !== false) {
+                    $this->dataProvider->pagination->pageSize = $savedLength == -1 ? 0 : $savedLength;
+                    if ($savedStart !== null && $savedLength > 0) {
+                        $this->dataProvider->pagination->page = (int)floor($savedStart / $savedLength);
+                    }
+                }
+                if ($savedLength !== null) {
+                    $clientOptions['pageLength'] = $savedLength;
+                }
+            }
+        } else {
+            $oldCookieName = $prefix . '_pageLength';
+            $savedLength = isset($_COOKIE[$oldCookieName]) ? $_COOKIE[$oldCookieName] : null;
+            if ($savedLength !== null) {
+                $savedLength = (int)$savedLength;
+                if ($this->dataProvider->pagination !== false) {
+                    $this->dataProvider->pagination->pageSize = $savedLength == -1 ? 0 : $savedLength;
+                }
+                $clientOptions['pageLength'] = $savedLength;
+            }
+        }
+
         $view = $this->getView();
         $id = $this->tableOptions['id'];
 

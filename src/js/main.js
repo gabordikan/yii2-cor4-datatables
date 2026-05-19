@@ -23,7 +23,10 @@ function cor4DataTables( selector, options ) {
       scrollX: true,
       scroller: true,
       scrollY: '100%',
-      pageLength: 25,
+      pageLength: (options.pageLength !== undefined) ? options.pageLength : (function() {
+          var val = getCookie((options.prefix || 'datatable') + "_pageLength");
+          return val !== "" ? parseInt(val) : 25;
+      })(),
       order: options.order,
       dom: 'Blfrtip',
       buttons: [
@@ -36,6 +39,25 @@ function cor4DataTables( selector, options ) {
       hideSearch: options.hideSearch,
       serverSide: options.serverSide || false,
       ajax: options.ajax || null,
+      stateSave: true,
+      stateSaveParams: function(settings, data) {
+          delete data.search;
+          delete data.order;
+          delete data.columns;
+      },
+      stateSaveCallback: function(settings, data) {
+          var prefix = options.prefix || 'datatable';
+          document.cookie = prefix + "_state=" + encodeURIComponent(JSON.stringify(data)) + "; path=/; max-age=31536000; SameSite=Lax";
+      },
+      stateLoadCallback: function(settings) {
+          var prefix = options.prefix || 'datatable';
+          var cookie = getCookie(prefix + "_state");
+          try {
+              return cookie ? JSON.parse(decodeURIComponent(cookie)) : null;
+          } catch (e) {
+              return null;
+          }
+      },
 
       initComplete : function() {
 
@@ -102,5 +124,10 @@ function cor4DataTables( selector, options ) {
           });
         }
       }
+    });
+
+    jQuery(selector).on('length.dt', function(e, settings, len) {
+        var prefix = options.prefix || 'datatable';
+        document.cookie = prefix + "_pageLength=" + len + "; path=/; max-age=31536000; SameSite=Lax";
     });
 }
